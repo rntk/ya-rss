@@ -1,6 +1,6 @@
 ﻿var app = {
 token : '',
-id : '4e3828a5e50e4d6f8c35abc19ee36ab0',
+id : '', //здесь вставлять id
 colors : {'a' : '#f3f3f3', 'p' : '#ffffff', 'r' : '#bcbcbc'},
 groups : {},
 posts : [],
