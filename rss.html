@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="all">
+    <meta name="description" content="">
+    <meta name="keywords" content="">    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>RSS</title>
+    <script type="text/javascript" src="jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="rss.js"></script>
+</head>
+<body>
+
+<div id="main">
+
+    <div id="left">
+        <iframe name="worker" id="worker" src="worker.html"></iframe>
+        <div id="loading"><img src="img/g_load.gif" /></div>
+        <ul id="ul">
+        </ul>
+    </div>
+    <div id="right">
+    </div>    
+
+</div>
+<div id="help">
+<ul>
+<li>H - показать/скрыть окно со справкой</li>
+<li>R - обновить посты в выбранной ленте/папке</li>
+<li>V - показать/скрыть окно выбора режима вывода постов (Только заголовок или Весь пост)</li>
+<li>N - переход к следующему непрочитанному посту</li>
+<li>B - переход к предыдущему непрочитанному посту</li>
+<li>J - пометить текущий пост как прочитанный и перейти к следующему непрочитанному посту</li>
+<li>K - пометить текущий пост как прочитанный и перейти к предыдущему непрочитанному посту</li>
+<li>X - пометить текущий пост как "прочитанный"</li>
+<li>S - развернуть/свернуть текущий пост</li>
+<li>Shift + A - установить отметку о прочтении только тем постам, которые выведены в окне</li>
+<li>Shift + X - пометить выбранную ленту/папку как "прочитанная"</li>
+<li>Shift + R - обновить данные о папках/лентах</li>
+<li>При клике по заголовку ленты/папки выведутся все непрочитанный посты из данной ленты/папки</li>
+<li>При клике по количеству непрочитанных постов ленты/папки, данная лента/папка отметится как "прочитанная"</li>
+</ul>
+</div>
+<div id="view_type">
+<div id="title_type">Только заголовок</div>
+<div id="full_type">Весь пост</div>
+</div>
+</body>
+</html>
