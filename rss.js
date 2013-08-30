@@ -493,7 +493,7 @@ $(document).keypress(function(e) {
                     $('#' + app.current_post).html(app.getPostTitle(app.current_post) + app.getPostContent(-1));
                 }
             }
-            app.setCurrentPost(app.current_post, false, false);
+            app.setScroll(app.setCurrentPost(app.current_post, false, false) - 1, false);
         break;
         default:
             ;//alert(e.which);
