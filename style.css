@@ -194,6 +194,11 @@ li ul {
     float: none !important;
 }
 
+#content img {
+    float: none !important;
+    max-width: 100%;
+}
+
 #feed_d {
     font: 10pt Arial;
     color: #bcbcbc;
