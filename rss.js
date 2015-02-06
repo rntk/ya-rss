@@ -73,12 +73,20 @@ getGroups : function(first, result) {
 getPosts : function(first, all, result, callback) {
     if (first) {
         var clbck = callback;
+        var unread_count;
+        var u;
         if (all) {
-            var u = '/posts?group_id=' + app.groups[app.current_group]['group_id'] + '&read_status=unread&items_per_page=' + app.groups[app.current_group]['unread_count'];
+            unread_count = app.groups[app.current_group]['unread_count'];
+            u = '/posts?group_id=' + app.groups[app.current_group]['group_id'] + '&read_status=unread&items_per_page=';
         }
         else {
-            var u = '/posts?md5=' + app.current_feed + '&read_status=unread&items_per_page=' + app.groups[app.current_group]['feeds'][app.current_feed]['unread_count'];
-        }    
+            unread_count = app.groups[app.current_group]['feeds'][app.current_feed]['unread_count'];
+            u = '/posts?md5=' + app.current_feed + '&read_status=unread&items_per_page=';
+        } 
+        if (unread_count > 100) { 
+            unread_count = 100; 
+        }
+        u += unread_count;
         $.ajax({ url : app.url, type : "GET", data: {'method' : 'GET', 'url' : u, 'token' : app.token, 'data' : '0'}, dataType : "json", async : true, success : function(x){app.getPosts(false, false, x, callback)} });
     }
     else {
