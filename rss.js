@@ -15,14 +15,14 @@ all_group : false,
 url : 'request.php',
 Start : function() {
     this.getToken();
-    return this.token != '';
+    return this.token !== '';
 },
 getToken : function() {
     var c = document.cookie.match(new RegExp('token=([0-9A-Za-z]*)(; |$)'));
-    this.token = ( c ) ? c[1] : '';
-    if (this.token == '') {
+    this.token = (c)? c[1]: '';
+    if (this.token === '') {
         var t = window.location.toString().match(new RegExp('access_token=([a-zA-Z0-9]*)(&|$)'));
-        if ( t ) {
+        if (t) {
             this.token = t[1];
             document.cookie = 'token=' + this.token;
             window.location = 'http://' + window.location.host + window.location.pathname;
@@ -37,31 +37,31 @@ getGroups : function(first, result) {
         $.ajax({ url : app.url, type : "GET", data: {'method' : 'GET', 'url' : '/subscriptions', 'token' : app.token, 'data' : '0'}, dataType : "json", async : true, success: function(x) {app.getGroups(false, x);} });
     }
     else {
-        if (result['status'] == '200') {
-            grs = $(result['data']).find('group');
-            $(grs).each(
-                function(o) {
-                    var name = $(this).children('title').eq(0).text();
+        if (result['status'] === '200') {
+            $grs = $(result['data']).find('group');
+            $grs.each(
+                function() {
+                    var $this = $(this);
+                    var name = $this.children('title').eq(0).text();
                     var title = 'g';
                     for (var chr = 0; chr < name.length; chr++) {
                         title += name.charCodeAt(chr);
                     }
                     app.groups[title] = {};
                     app.groups[title]['name'] = name;
-                    app.groups[title]['unread_count'] = $(this).attr('unread_count');
-                    app.groups[title]['group_id'] = $(this).attr('group_id');
+                    app.groups[title]['unread_count'] = $this.attr('unread_count');
+                    app.groups[title]['group_id'] = $this.attr('group_id');
                     app.groups[title]['feeds'] = {};
-                    var feeds = $(this).find('feed');
-                    $(feeds).each(
-                        function() {
-                            if (parseInt($(this).attr('unread_count')) > 0) {
-                                var md5 = $(this).find('md5').text();                        
-                                app.groups[title]['feeds'][md5] = {};
-                                app.groups[title]['feeds'][md5]['unread_count'] = $(this).attr('unread_count');
-                                app.groups[title]['feeds'][md5]['title'] = $(this).find('title').text();
-                            }
+                    var $feeds = $this.find('feed');
+                    $feeds.each(function() {
+                        var $this = $(this);
+                        if (parseInt($this.attr('unread_count')) > 0) {
+                            var md5 = $this.find('md5').text();
+                            app.groups[title]['feeds'][md5] = {};
+                            app.groups[title]['feeds'][md5]['unread_count'] = $this.attr('unread_count');
+                            app.groups[title]['feeds'][md5]['title'] = $this.find('title').text();
                         }
-                    );
+                    });
                 });
             this.showGroups();
         }
@@ -82,33 +82,32 @@ getPosts : function(first, all, result, callback) {
         else {
             unread_count = app.groups[app.current_group]['feeds'][app.current_feed]['unread_count'];
             u = '/posts?md5=' + app.current_feed + '&read_status=unread&items_per_page=';
-        } 
-        if (unread_count > 100) { 
-            unread_count = 100; 
+        }
+        if (unread_count > 100) {
+            unread_count = 100;
         }
         u += unread_count;
         $.ajax({ url : app.url, type : "GET", data: {'method' : 'GET', 'url' : u, 'token' : app.token, 'data' : '0'}, dataType : "json", async : true, success : function(x){app.getPosts(false, false, x, callback)} });
     }
     else {
         app.posts = [];
-        if (result['status'] == '200') {
+        if (result['status'] === '200') {
             var psts = $(result['data']).find('post');
-            var i = 0;
             $(psts).each(
-                function() {
+                function(i) {
+                    var $this = $(this);
                     app.posts[i] = {};
-                    app.posts[i]['meta'] = $(this).find('meta').attr('href');
-                    app.posts[i]['id'] = $(this).attr('id');
+                    app.posts[i]['meta'] = $this.find('meta').attr('href');
+                    app.posts[i]['id'] = $this.attr('id');
                     app.posts[i]['feed'] = app.posts[i]['id'].substring(0, app.posts[i]['id'].indexOf('.'));
-                    var entry = $(this).find('entry').eq(0);
-                    app.posts[i]['title'] = $(entry).find('title').text();
-                    if (app.posts[i]['title'] == '') { app.posts[i]['title'] = 'No title' };
-                    app.posts[i]['content'] = $(entry).find('content').html();
-                    app.posts[i]['link'] = $(entry).find('link').attr('href');
-                    app.posts[i]['author'] = $(entry).find('author').text();
-                    app.posts[i]['date'] = $(entry).find('issued').text();
+                    var $entry = $this.find('entry').eq(0);
+                    app.posts[i]['title'] = $entry.find('title').text();
+                    if (app.posts[i]['title'] === '') { app.posts[i]['title'] = 'No title' };
+                    app.posts[i]['content'] = $entry.find('content').html();
+                    app.posts[i]['link'] = $entry.find('link').attr('href');
+                    app.posts[i]['author'] = $entry.find('author').text();
+                    app.posts[i]['date'] = $entry.find('issued').text();
                     app.posts[i]['read'] = false;
-                    i++;
                 }
             );
             callback();
@@ -135,7 +134,7 @@ setPostStatus : function(status, all, all_posts) {
             else {
                 var mark = '<read><md5>' + this.current_feed + '</md5></read>';
             }
-            $.ajax({ url : this.url, type : 'GET', data: {'method' : 'PUT', 'url' : '/subscriptions', 'token' : this.token, 'data' : mark}, async : true });            
+            $.ajax({ url : this.url, type : 'GET', data: {'method' : 'PUT', 'url' : '/subscriptions', 'token' : this.token, 'data' : mark}, async : true });
         }
         status = '';
     }
@@ -156,12 +155,14 @@ setPostStatus : function(status, all, all_posts) {
                                                         .removeClass('post')
                                                         .addClass('expost')
                                                         .click(function() {
-                                                            var id = $(this).attr('id');
-                                                            $(this).html(app.getPostTitle(id) + app.getPostContent(id));
+                                                            var $this = $(this);
+                                                            var id = $this.attr('id');
+                                                            $this.html(app.getPostTitle(id) + app.getPostContent(id));
                                                         })
-                                                        .mouseleave(function() { 
-                                                            if ( $(this).children('#content').length != 0 ) { 
-                                                                $(this).html( app.getPostTitle($(this).attr('id')) + app.getPostContent(-1) ); 
+                                                        .mouseleave(function() {
+                                                            var $this = $(this);
+                                                            if ($this.children('#content').length !== 0 ) {
+                                                                $this.html( app.getPostTitle($this.attr('id')) + app.getPostContent(-1) );
                                                                 app.setCurrentPost(app.current_post, false, false);
                                                             };
                                                         });
@@ -177,8 +178,8 @@ setPostStatus : function(status, all, all_posts) {
 },
 
 showGroups : function() {
-    var ul = $('#ul');
-    $(ul).empty();
+    var $ul = $('#ul');
+    $ul.empty();
     for (var i in this.groups) {
         if (this.groups[i]['unread_count'] > 0) {
             this.groups[i]['li'] = document.createElement('li');
@@ -190,9 +191,9 @@ showGroups : function() {
                         app.all_group = true;
                         app.setCurrentFeed('');
                         app.setCurrentGroup($(this).parent().attr('id'));
-                        app.getPosts(true, true, '', 
-                            function() { 
-                                app.showPosts(); 
+                        app.getPosts(true, true, '',
+                            function() {
+                                app.showPosts();
                                 app.setCurrentPost(0, false, true);
                             }
                         );
@@ -209,7 +210,7 @@ showGroups : function() {
                             app.updateUnreadCount(app.groups[app.current_group]['unread_count'], '');
                             app.all_group = a_g;
                             app.current_group = c_g;
-                            
+
                         }
                     );
             $(this.groups[i]['li']).attr('id', i)
@@ -228,7 +229,7 @@ showGroups : function() {
                                 app.setCurrentGroup('');
                                 app.setCurrentFeed($(this).parent().attr('id'));
                                 app.current_group = $(this).parent().parent().parent().attr('id');
-                                app.getPosts(true, false, '', 
+                                app.getPosts(true, false, '',
                                     function(){
                                         app.showPosts();
                                         app.setCurrentPost(0, false, true);
@@ -268,7 +269,7 @@ showGroups : function() {
     this.setCurrentFeed(this.current_feed);
 },
 getPostTitle : function(i) {
-    var s = '<h3><a href="' + this.posts[i]['link'] + '" target="_blank">' + this.posts[i]['title'] + '</a></h3>' + 
+    var s = '<h3><a href="' + this.posts[i]['link'] + '" target="_blank">' + this.posts[i]['title'] + '</a></h3>' +
             '<div id="feed_d">' + this.groups[this.current_group]['feeds'][this.posts[i]['feed']]['title'] + ' | ' + this.posts[i]['author'] + ' | ' + this.posts[i]['date'] + '</div>';
     return s;
 },
@@ -308,44 +309,49 @@ showPosts : function() {
     this.setScroll(0, true);
 },
 setCurrentFeed : function(next_feed) {
-    $('#' + this.current_feed).removeClass('sub_li_sel');
-    $('#' + this.current_feed).addClass('sub_li');
-    if (next_feed != '') {
-        $('#' + next_feed).removeClass('sub_li');
-        $('#' + next_feed).addClass('sub_li_sel');
+    var $current_feed = $('#' + this.current_feed);
+    $current_feed.removeClass('sub_li_sel');
+    $current_feed.addClass('sub_li');
+    if (next_feed !== '') {
+        var $next_feed = $('#' + next_feed);
+        $next_feed.removeClass('sub_li');
+        $next_feed.addClass('sub_li_sel');
         this.current_feed = next_feed;
     }
 },
 setCurrentGroup : function(next_group) {
-    $('#' + this.current_group).removeClass('top_li_sel');
-    $('#' + this.current_group).addClass('top_li');
-    if (next_group != '') {
-        $('#' + next_group).removeClass('top_li');
-        $('#' + next_group).addClass('top_li_sel');
+    var $current_group = $('#' + this.current_group);
+    $current_group.removeClass('top_li_sel');
+    $current_group.addClass('top_li');
+    if (next_group !== '') {
+        var $next_group = $('#' + next_group);
+        $next_group.removeClass('top_li');
+        $next_group.addClass('top_li_sel');
         this.current_group = next_group;
-    }    
+    }
 },
 setCurrentPost : function(id, scan, up) {
-    $('#' + this.current_post).children('h3').css('background-color', this.colors['p']);
+    $current_post = $('#' + this.current_post);
+    $current_post.children('h3').css('background-color', this.colors['p']);
     if (scan) {
         var id_n = 0;
         if (up) {
-            id_n = Number($('#' + this.current_post).prevAll('.post').attr('id'));
+            id_n = Number($current_post.prevAll('.post').attr('id'));
             if (isNaN(id_n)) {
-                id_n = Number($('#' + this.current_post).nextAll('.post').attr('id'));
+                id_n = Number($current_post.nextAll('.post').attr('id'));
             }
         }
         else {
-            id_n = Number($('#' + this.current_post).nextAll('.post').attr('id'));
+            id_n = Number($current_post.nextAll('.post').attr('id'));
             if (isNaN(id_n)) {
-                id_n = Number($('#' + this.current_post).prevAll('.post').attr('id'));
+                id_n = Number($current_post.prevAll('.post').attr('id'));
             }
         }
         if (!isNaN(id_n)) {
             this.current_post = id_n;
         }
     }
-    else { 
+    else {
         if ($(this.posts[id]['post']).hasClass('post')) {
             this.current_post = id;
         }
@@ -359,13 +365,14 @@ setCurrentViewType : function(next_type) {
     this.view_type = next_type;
 },
 setScroll : function(curp, up) {
+    var $curp = $('#' + curp);
     if (curp >= 0) {
         if (up) {
-            var v = $('#' + curp).css('margin-top');
-            var t = $('#' + curp).offset().top - parseInt(v.substr(0,v.length - 2));
+            var v = $curp.css('margin-top');
+            var t = $curp.offset().top - parseInt(v.substr(0,v.length - 2));
         }
         else {
-            var t = $('#' + curp).offset().top + $('#' + curp).height();
+            var t = $curp.offset().top + $curp.height();
         };
     }
     else {
@@ -375,16 +382,16 @@ setScroll : function(curp, up) {
 },
 updateUnreadCount : function(cnt, fd) {
     app.groups[app.current_group]['unread_count'] -= cnt;
-    if (app.groups[app.current_group]['unread_count'] == 0) {
+    if (app.groups[app.current_group]['unread_count'] === 0) {
         $(app.groups[app.current_group]['li']).hide('slow');
     }
     else {
-        if (fd == '') {
+        if (fd === '') {
             fd = app.posts[app.current_post]['feed'];
         }
         $(app.groups[app.current_group]['li']).children('#count').eq(0).text(app.groups[app.current_group]['unread_count']);
         app.groups[app.current_group]['feeds'][fd]['unread_count'] -= cnt;
-        if (app.groups[app.current_group]['feeds'][fd]['unread_count'] == 0) {
+        if (app.groups[app.current_group]['feeds'][fd]['unread_count'] === 0) {
             $(app.groups[app.current_group]['feeds'][fd]['li']).hide('slow');
         }
         else {
@@ -423,13 +430,13 @@ $(document).keypress(function(e) {
             else {
                 app.updateUnreadCount(app.groups[app.current_group]['feeds'][app.posts[app.current_post]['feed']]['unread_count'], '');
             }
-            $('#right').children('.post').each(function(o) { $(this).children('h3').children('a').css('color', app.colors['r']); })
-            app.setPostStatus('read', true, false);     
-        break;        
+            $('#right').children('.post').each(function() { $(this).children('h3').children('a').css('color', app.colors['r']); })
+            app.setPostStatus('read', true, false);
+        break;
         case 1086:
         case 106://j
             if (!app.posts[app.current_post]['read']) {
-                app.posts[app.current_post]['read'] = true;            
+                app.posts[app.current_post]['read'] = true;
                 app.updateUnreadCount(1, '');
                 app.setPostStatus('read', false);
             }
@@ -438,7 +445,7 @@ $(document).keypress(function(e) {
         case 1083:
         case 107://k
             if (!app.posts[app.current_post]['read']) {
-                app.posts[app.current_post]['read'] = true;            
+                app.posts[app.current_post]['read'] = true;
                 app.updateUnreadCount(1, '');
                 app.setPostStatus('read', false);
             }
@@ -452,7 +459,7 @@ $(document).keypress(function(e) {
             else {
                 app.updateUnreadCount(app.groups[app.current_group]['feeds'][app.posts[app.current_post]['feed']]['unread_count'], '');
             }
-            $('#right').children('.post').each(function(o) { $(this).children('h3').children('a').css('color', app.colors['r']); })
+            $('#right').children('.post').each(function() { $(this).children('h3').children('a').css('color', app.colors['r']); })
             app.setPostStatus('read', true, true);
         break;
         case 1082:
@@ -466,11 +473,11 @@ $(document).keypress(function(e) {
         break;
         case 1050:
         case 82://shift+r
-            app.getGroups(true);            
+            app.getGroups(true);
         break;
         case 1088:
         case 104://h
-            if ($('#help').css('display') == 'none') {
+            if ($('#help').css('display') === 'none') {
                 $('#help').show();
             }
             else {
@@ -479,7 +486,7 @@ $(document).keypress(function(e) {
         break;
         case 1084:
         case 118://v
-            if ($('#view_type').css('display') == 'none') {
+            if ($('#view_type').css('display') === 'none') {
                 $('#view_type').show();
             }
             else {
@@ -518,7 +525,7 @@ function() {
         app.getGroups(true);
         app.worker = window.frames['worker'];
     }
-    else { 
+    else {
         alert('No access to Yandex');
     }
 })
