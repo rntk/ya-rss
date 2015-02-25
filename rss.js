@@ -465,7 +465,7 @@ var app = {
                 this.current_post = id_n;
             }
         } else {
-            if (this.posts[id].hasOwnProperty('post') && $(this.posts[id].post).hasClass('post')) {
+            if (this.posts[id] && this.posts[id].hasOwnProperty('post') && $(this.posts[id].post).hasClass('post')) {
                 this.current_post = id;
             }
         }
